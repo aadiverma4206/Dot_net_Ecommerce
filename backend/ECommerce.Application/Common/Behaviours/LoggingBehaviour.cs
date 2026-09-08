@@ -10,7 +10,8 @@ using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Application.Common.Behaviours
 {
-    public class LoggingBehaviour<TRequest, TResponse> : IRequestPreProcessor<TRequest> where TRequest : notnull
+    public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> 
+        where TRequest : IRequest<TResponse>
     {
         private readonly ILogger<LoggingBehaviour<TRequest, TResponse>> _logger;
         private readonly ICurrentUserService _currentUserService;
@@ -26,7 +27,7 @@ namespace ECommerce.Application.Common.Behaviours
             _identityService = identityService;
         }
 
-        public async Task Process(TRequest request, CancellationToken cancellationToken)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             var requestName = typeof(TRequest).Name;
             var userId = _currentUserService.UserId ?? string.Empty;
@@ -39,6 +40,8 @@ namespace ECommerce.Application.Common.Behaviours
 
             _logger.LogInformation("CleanArchitecture Request: {Name} {@UserId} {@UserName} {@Request}",
                 requestName, userId, userName, request);
+
+            return await next();
         }
     }
 }

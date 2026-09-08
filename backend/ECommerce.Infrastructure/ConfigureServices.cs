@@ -22,6 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddDbContext<ApplicationDbContext>(opt => {
                 opt.UseSqlite(connectionString);
+                opt.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
             });
 
             services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());

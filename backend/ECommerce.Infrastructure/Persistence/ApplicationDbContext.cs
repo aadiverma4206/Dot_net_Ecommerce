@@ -30,6 +30,13 @@ namespace ECommerce.Infrastructure.Persistence
         public DbSet<UserLike> UserLikes => Set<UserLike>();
         public DbSet<Image> Images => Set<Image>();
 
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            base.ConfigureConventions(configurationBuilder);
+            configurationBuilder.Properties<DateTimeOffset>().HaveConversion<DateTimeOffsetToBinaryConverter>();
+            configurationBuilder.Properties<DateTimeOffset?>().HaveConversion<DateTimeOffsetToBinaryConverter>();
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -48,18 +55,6 @@ namespace ECommerce.Infrastructure.Persistence
                         default:
                             builder.Entity(entity.Name).Property(prop.Name).HasColumnType("varchar(150)");
                             break;
-                    }
-                }
-            }
-
-            if(Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
-            {
-                foreach(var item in builder.Model.GetEntityTypes())
-                {
-                    var props = item.ClrType.GetProperties().Where(e => e.PropertyType == typeof(DateTimeOffset));
-                    foreach (var prop in props)
-                    {
-                        builder.Entity(item.Name).Property(prop.Name).HasConversion(new DateTimeOffsetToBinaryConverter());
                     }
                 }
             }
