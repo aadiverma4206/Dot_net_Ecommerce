@@ -13,11 +13,11 @@ namespace ECommerce.Infrastructure.Persistence;
 
 public class ApplicationDbContextInitialiser
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<ApplicationDbContextInitialiser> _logger;
     private readonly ApplicationDbContext _context;
     private readonly UserManager<AppUser> _userManager;
 
-    public ApplicationDbContextInitialiser(ILogger logger, ApplicationDbContext context, UserManager<AppUser> userManager)
+    public ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context, UserManager<AppUser> userManager)
     {
         _logger = logger;
         _context = context;

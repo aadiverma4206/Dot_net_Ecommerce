@@ -46,7 +46,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddSingleton<IConnectionMultiplexer>(opt => {
-                var connConfig = ConfigurationOptions.Parse(config.GetConnectionString("Redis"), true);
+                var connConfig = ConfigurationOptions.Parse(config.GetConnectionString("Redis") ?? "localhost:6379", true);
+                connConfig.AbortOnConnectFail = false;
                 return ConnectionMultiplexer.Connect(connConfig);
             });
 

@@ -26,9 +26,9 @@ namespace ECommerce.Infrastructure.Persistence.Repositories
             var serializedCartItems = await _database.HashGetAllAsync($"items:{_currentUserService.UserId}");
 
             var cartItems = serializedCartItems.Select(x => {
-                var cartItem = JsonSerializer.Deserialize<CartItem>(x.Value);
+                var cartItem = JsonSerializer.Deserialize<CartItem>((string)x.Value!);
                 return cartItem;
-            }).ToList();
+            }).Where(x => x != null).ToList()!;
 
             return cartItems;
         }
@@ -36,7 +36,7 @@ namespace ECommerce.Infrastructure.Persistence.Repositories
         public async Task<CartItem> GetCartItem(Guid id)
         {
             var serializedRetrievedCartItem = await _database.HashGetAsync($"items:{_currentUserService.UserId}", id.ToString());
-            var retrievedCartItem = JsonSerializer.Deserialize<CartItem>(serializedRetrievedCartItem);
+            var retrievedCartItem = JsonSerializer.Deserialize<CartItem>((string)serializedRetrievedCartItem!);
 
             return retrievedCartItem;
         }
